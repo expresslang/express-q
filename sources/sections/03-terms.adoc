@@ -1,0 +1,18 @@
+
+== Terms and definitions
+
+=== EXPRESS-Q
+
+query language for EXPRESS schemas, used to define mappings and constraints
+between ARM and MIM schemas
+
+
+// ARM:: Application Reference Model, a conceptual schema that defines the
+// information requirements for a specific application domain
+
+// MIM:: Model Implementation Model, an implementation schema that realizes the
+// concepts defined in the ARM using constructs from integrated resources
+
+// STEP:: Standard for the Exchange of Product model data, a comprehensive ISO
+// standard (ISO 10303) for the computer-interpretable representation and
+// exchange of product manufacturing information

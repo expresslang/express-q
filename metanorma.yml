@@ -1,0 +1,9 @@
+---
+metanorma:
+  source:
+    files:
+      - sources/iso-10303-81.adoc
+
+  collection:
+    name: EXPRESS-Q language reference
+    organization: EXPRESS Language Foundation

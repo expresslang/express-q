@@ -1,0 +1,78 @@
+express_q_file = { entity_mapping } ;
+
+entity_mapping = "ENTITY_MAPPING" entity_name ";" newline
+                 [ extensible_decl ]
+                 [ aim_element_decl ]
+                 [ source_decl ]
+                 [ express_ref_decl ]
+                 [ refpath_decl ]
+                 [ alt_map_decl ]
+                 { attribute_mapping }
+                 "END_ENTITY_MAPPING" ";" ;
+
+extensible_decl = "EXTENSIBLE" ":" boolean ";" newline ;
+
+aim_element_decl = "AIM_ELEMENT" ":" string ";" newline ;
+
+source_decl = "SOURCE" ":" string ";" newline ;
+
+express_ref_decl = "EXPRESS_REF" ":" "[" [ string { "," string } ] "]" ";" newline ;
+
+refpath_decl = "REFPATH" ":" "{" newline
+               refpath_content
+               "}" ";" newline ;
+
+refpath_content = { refpath_line } ;
+
+refpath_line = [ indentation ] reference_expression newline ;
+
+reference_expression = entity_reference [ relationship { relationship } ] ;
+
+relationship = path_relation | supertype_relation | subtype_relation | 
+                select_extension | constraint ;
+
+entity_reference = identifier ;
+
+path_relation = "->" entity_reference ;
+
+supertype_relation = "=>" entity_reference ;
+
+subtype_relation = "<=" entity_reference ;
+
+select_extension = "*" ">" entity_reference | "<" "*" entity_reference ;
+
+constraint = "[" constraint_expression "]" ;
+
+constraint_expression = ? expression following EXPRESS syntax ? ;
+
+indentation = ? one or more spaces or tabs ? ;
+
+alt_map_decl = "ALT_MAP" ":" "[" [ string { "," string } ] "]" ";" newline ;
+
+attribute_mapping = "ATTRIBUTE_MAPPING" attribute_name ";" newline
+                    "ASSERTION_TO" ":" string ";" newline
+                    [ aim_element_decl ]
+                    [ source_decl ]
+                    [ express_ref_decl ]
+                    [ refpath_decl ]
+                    "END_ATTRIBUTE_MAPPING" ";" newline ;
+
+entity_name = identifier ;
+
+attribute_name = identifier ;
+
+identifier = letter { letter | digit | "_" } ;
+
+boolean = "TRUE" | "FALSE" ;
+
+string = '"' { character } '"' ;
+
+letter = "A" | ... | "Z" | "a" | ... | "z" ;
+
+digit = "0" | ... | "9" ;
+
+character = ? any printable character ? ;
+
+indentation = ? one or more spaces or tabs ? ;
+
+newline = ? line break character(s) ? ;

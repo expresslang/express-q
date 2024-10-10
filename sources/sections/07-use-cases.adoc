@@ -1,0 +1,113 @@
+== Use cases and examples
+
+=== General
+
+This section provides examples of how EXPRESS-Q can be used in various scenarios
+related to STEP application protocols.
+
+=== Use case 1: Mapping a complex product structure
+
+In this example, we'll demonstrate how EXPRESS-Q can be used to map a complex product structure from an ARM schema to a MIM schema.
+
+[example]
+----
+ENTITY_MAPPING Product;
+AIM_ELEMENT: "product";
+SOURCE: "ISO 10303-41";
+REFPATH: {
+  product <= product_definition_formation
+  product_definition_formation.of_product -> product
+};
+
+ATTRIBUTE_MAPPING id;
+ASSERTION_TO: "id";
+AIM_ELEMENT: "product.id";
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING name;
+ASSERTION_TO: "label";
+AIM_ELEMENT: "product.name";
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING description;
+ASSERTION_TO: "text";
+AIM_ELEMENT: "product.description";
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING components;
+ASSERTION_TO: "SET OF Component";
+REFPATH: {
+  product <- product_definition_formation
+  product_definition_formation <- product_definition
+  product_definition <- product_definition_relationship.relating_product_definition
+  product_definition_relationship -> 
+  product_definition_relationship.related_product_definition
+  product_definition_relationship.related_product_definition -> product_definition
+  product_definition -> product_definition_formation
+  product_definition_formation -> product
+};
+END_ATTRIBUTE_MAPPING;
+
+END_ENTITY_MAPPING;
+
+ENTITY_MAPPING Component;
+AIM_ELEMENT: "product";
+SOURCE: "ISO 10303-41";
+REFPATH: {
+  product <= product_definition_formation
+  product_definition_formation.of_product -> product
+};
+
+ATTRIBUTE_MAPPING id;
+ASSERTION_TO: "id";
+AIM_ELEMENT: "product.id";
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING name;
+ASSERTION_TO: "label";
+AIM_ELEMENT: "product.name";
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING quantity;
+ASSERTION_TO: "measure_with_unit";
+REFPATH: {
+  product <- product_definition_formation
+  product_definition_formation <- product_definition
+  product_definition <- product_definition_relationship
+  product_definition_relationship.related_product_definition_quantity -> measure_with_unit
+};
+END_ATTRIBUTE_MAPPING;
+
+END_ENTITY_MAPPING;
+----
+
+This example demonstrates how a product with multiple components can be mapped from an ARM schema to a MIM schema using EXPRESS-Q. It shows the use of complex reference paths to navigate relationships between entities in the MIM schema.
+
+=== Use case 2: Mapping with alternative representations
+
+This example shows how EXPRESS-Q can handle cases where an ARM entity might be mapped to different MIM representations based on certain conditions.
+
+[example]
+----
+ENTITY_MAPPING GeometricRepresentation;
+ALT_MAP: ["shape_representation", "tessellated_shape_representation"];
+SOURCE: "ISO 10303-42";
+
+REFPATH: {
+  (shape_representation <= representation
+   [representation.context_of_items->geometric_representation_context]) |
+  (tessellated_shape_representation <= representation
+   [representation.context_of_items->geometric_representation_context])
+};
+
+ATTRIBUTE_MAPPING items;
+ASSERTION_TO: "SET OF geometric_representation_item";
+REFPATH: {
+  representation.items[i] -> geometric_representation_item
+};
+END_ATTRIBUTE_MAPPING;
+
+END_ENTITY_MAPPING;
+----
+
+This example demonstrates how EXPRESS-Q can handle alternative mappings for a single ARM entity. The GeometricRepresentation entity can be mapped to either a shape_representation or a tessellated_shape_representation in the MIM schema, depending on the specific requirements of the application.

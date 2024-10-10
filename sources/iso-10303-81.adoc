@@ -1,0 +1,53 @@
+= EXPRESS-Q: EXPRESS Query Language Specification
+:docnumber: 10303
+:partnumber: 81
+:edition: 1
+:copyright-year: 2024
+:revdate: 2024-10-10
+:language: en
+:title-intro-en: Industrial automation systems and integration
+:title-main-en: Product data representation and exchange
+:title-part-en: Description methods: The EXPRESS-Q language reference manual
+:title-intro-fr: Systèmes d'automatisation industrielle et intégration
+:title-main-fr: Représentation et échange de données de produits
+:title-part-fr: Méthodes de description: Manuel de référence du langage EXPRESS-Q
+:doctype: international-standard
+:docstage: 00
+:docsubstage: 00
+:technical-committee-number: 184
+:technical-committee: Industrial automation systems and integration
+:subcommittee-type: SC
+:subcommittee-number: 4
+:subcommittee: Industrial data
+:workgroup-type: WG
+:workgroup-number: 12
+:workgroup: STEP product modelling and resources
+:secretariat: ANSI
+:imagesdir: images
+:mn-document-class: iso
+:mn-output-extensions: xml,html,doc,pdf,rxl
+:local-cache-only:
+
+include::sections/00-foreword.adoc[]
+
+include::sections/00-introduction.adoc[]
+
+include::sections/01-scope.adoc[]
+
+include::sections/02-normrefs.adoc[]
+
+include::sections/03-terms.adoc[]
+
+include::sections/04-spec.adoc[]
+
+include::sections/05-validation.adoc[]
+
+include::sections/06-implementation.adoc[]
+
+include::sections/07-use-cases.adoc[]
+
+include::sections/08-summary.adoc[]
+
+include::sections/aa-example.adoc[]
+
+include::sections/az-bibliography.adoc[]

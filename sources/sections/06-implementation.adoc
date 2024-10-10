@@ -1,0 +1,47 @@
+== Implementation guidelines
+
+=== General
+
+When implementing an EXPRESS-Q parser and validator, consider the following guidelines.
+
+=== Parsing
+
+1. Implement a lexical analyzer to tokenize the EXPRESS-Q input.
+2. Develop a parser based on the EBNF grammar provided in this specification.
+3. Create an abstract syntax tree (AST) or similar internal representation of the parsed EXPRESS-Q file.
+
+=== Schema loading
+
+1. Implement an EXPRESS schema parser or use an existing library to load and interpret ARM and MIM schemas.
+2. Create internal representations of the schemas that allow for efficient querying of entities, attributes, and relationships.
+
+=== Validation
+
+1. Implement validation checks based on the rules outlined in the "Validation rules" section.
+2. Perform two-pass validation:
+   a. First pass: Check syntax and basic semantic rules (e.g., entity and attribute existence).
+   b. Second pass: Validate complex semantic rules (e.g., consistency of reference paths).
+3. Provide clear and informative error messages for validation failures.
+
+=== Reference path interpretation
+
+1. Implement a separate parser for the reference path syntax.
+2. Develop algorithms to traverse reference paths within the context of the loaded schemas.
+3. Implement functions to evaluate constraints specified in reference paths.
+
+=== Performance considerations
+
+1. Use efficient data structures (e.g., hash tables) for quick lookups of schema elements.
+2. Implement caching mechanisms for frequently accessed schema information.
+3. Consider parallel processing for validating multiple entity or attribute mappings simultaneously.
+
+=== Extensibility
+
+1. Design the implementation to be extensible, allowing for future enhancements to the EXPRESS-Q language.
+2. Use modular design to separate concerns (e.g., parsing, schema handling, validation).
+
+=== Integration
+
+1. Provide APIs or interfaces for integrating the EXPRESS-Q parser and validator into larger systems or workflows.
+2. Consider implementing export functionality to generate reports or machine-readable representations of the validation results.
+

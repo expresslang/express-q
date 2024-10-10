@@ -1,0 +1,141 @@
+[appendix,obligation=informative]
+== Complete EXPRESS-Q file example
+
+This annex provides a complete example of an EXPRESS-Q file, demonstrating
+various features of the language in a cohesive context.
+
+[source]
+----
+-- Example EXPRESS-Q file for a simplified product data model
+
+ENTITY_MAPPING Product;
+EXTENSIBLE: FALSE;
+AIM_ELEMENT: "product";
+SOURCE: "ISO 10303-41";
+EXPRESS_REF: ["product_definition_schema"];
+REFPATH: {
+  product <= product_definition_formation
+  product_definition_formation.of_product -> product
+};
+
+ATTRIBUTE_MAPPING id;
+ASSERTION_TO: "identifier";
+AIM_ELEMENT: "product.id";
+REFPATH: {
+  product.id -> id
+};
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING name;
+ASSERTION_TO: "label";
+AIM_ELEMENT: "product.name";
+REFPATH: {
+  product.name -> name
+};
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING description;
+ASSERTION_TO: "text";
+AIM_ELEMENT: "product.description";
+REFPATH: {
+  product.description -> description
+};
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING category;
+ASSERTION_TO: "product_category";
+REFPATH: {
+  product <- product_category_assignment.products[i]
+  product_category_assignment -> product_category_assignment.assigned_category
+  product_category_assignment.assigned_category -> product_category
+};
+END_ATTRIBUTE_MAPPING;
+
+END_ENTITY_MAPPING;
+
+ENTITY_MAPPING Assembly;
+EXTENSIBLE: FALSE;
+AIM_ELEMENT: "product";
+SOURCE: "ISO 10303-44";
+EXPRESS_REF: ["product_structure_schema"];
+REFPATH: {
+  product <= product_definition_formation
+  product_definition_formation.of_product -> product
+  [product <- product_definition_formation
+   product_definition_formation <- product_definition
+   product_definition <- assembly_component_usage.relating_product_definition]
+};
+
+ATTRIBUTE_MAPPING components;
+ASSERTION_TO: "SET OF AssemblyComponent";
+REFPATH: {
+  product <- product_definition_formation
+  product_definition_formation <- product_definition
+  product_definition <- assembly_component_usage.relating_product_definition
+  assembly_component_usage -> assembly_component_usage.related_product_definition
+  assembly_component_usage.related_product_definition -> product_definition
+  product_definition -> product_definition_formation
+  product_definition_formation -> product
+};
+END_ATTRIBUTE_MAPPING;
+
+END_ENTITY_MAPPING;
+
+ENTITY_MAPPING AssemblyComponent;
+EXTENSIBLE: FALSE;
+AIM_ELEMENT: "product";
+SOURCE: "ISO 10303-44";
+EXPRESS_REF: ["product_structure_schema"];
+REFPATH: {
+  product <= product_definition_formation
+  product_definition_formation.of_product -> product
+};
+
+ATTRIBUTE_MAPPING quantity;
+ASSERTION_TO: "measure_with_unit";
+REFPATH: {
+  product <- product_definition_formation
+  product_definition_formation <- product_definition
+  product_definition <- assembly_component_usage
+  assembly_component_usage.quantity -> measure_with_unit
+};
+END_ATTRIBUTE_MAPPING;
+
+END_ENTITY_MAPPING;
+
+ENTITY_MAPPING GeometricRepresentation;
+EXTENSIBLE: TRUE;
+ALT_MAP: ["shape_representation", "tessellated_shape_representation"];
+SOURCE: "ISO 10303-42";
+EXPRESS_REF: ["geometric_model_schema"];
+
+REFPATH: {
+  (shape_representation <= representation
+   [representation.context_of_items->geometric_representation_context]) |
+  (tessellated_shape_representation <= representation
+   [representation.context_of_items->geometric_representation_context])
+};
+
+ATTRIBUTE_MAPPING items;
+ASSERTION_TO: "SET OF geometric_representation_item";
+REFPATH: {
+  representation.items[i] -> geometric_representation_item
+};
+END_ATTRIBUTE_MAPPING;
+
+END_ENTITY_MAPPING;
+----
+
+This example demonstrates a simplified product data model, including mappings
+for products, assemblies, assembly components, and geometric representations. It
+showcases various features of EXPRESS-Q, including:
+
+- Entity and attribute mappings
+- Reference paths with complex relationships
+- Alternative mappings
+- Constraints within reference paths
+- Use of SELECT types (implied by the EXTENSIBLE: TRUE; in GeometricRepresentation)
+
+This example is not exhaustive but provides a realistic scenario that
+illustrates how EXPRESS-Q can be used to define mappings between ARM and MIM
+schemas in a STEP application protocol context.

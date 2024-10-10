@@ -1,0 +1,17 @@
+
+[[scope]]
+== Scope
+
+This document specifies EXPRESS-Q, including its syntax, semantics, and usage within the context of EXPRESS schemas and STEP application protocols.
+
+The specification covers:
+
+. The grammar and syntax of EXPRESS-Q
+. The semantics of EXPRESS-Q constructs
+. The reference path syntax used for defining detailed mappings
+. Validation rules for EXPRESS-Q files
+. Guidelines for implementing EXPRESS-Q parsers and validators
+
+This specification is intended for use by software developers, data modelers,
+and systems integrators working with EXPRESS schemas and STEP application
+protocols.

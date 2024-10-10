@@ -1,0 +1,17 @@
+
+[[introduction]]
+== Introduction
+
+EXPRESS-Q is a query language designed to work with EXPRESS schemas,
+particularly in the context of STEP (Standard for the Exchange of Product model
+data) application protocols. It provides a formal mechanism for defining
+mappings between Application Reference Model (ARM) and Model Implementation
+Model (MIM) schemas, as well as specifying constraints on datasets that comply
+with these schemas.
+
+The primary purpose of EXPRESS-Q is to bridge the gap between conceptual models
+(ARM) and their implementations (MIM), ensuring that data exchange between
+different systems maintains semantic consistency. By providing a standardized
+way to express these mappings and constraints, EXPRESS-Q facilitates more robust
+and reliable data exchange in complex engineering and manufacturing
+environments.

@@ -1,0 +1,392 @@
+== EXPRESS-Q language specification
+
+=== Overview
+
+EXPRESS-Q is designed to work alongside EXPRESS schemas, providing a mechanism
+to define mappings between ARM and MIM schemas, as well as specifying
+constraints on datasets. The language uses a syntax similar to EXPRESS but
+introduces new constructs specific to querying and mapping.
+
+An EXPRESS-Q file typically consists of one or more entity mappings, each of
+which defines how an ARM entity and its attributes correspond to MIM elements.
+These mappings can include various declarations such as extensibility, AIM
+elements, sources, EXPRESS references, reference paths, and alternative
+mappings.
+
+=== EBNF grammar
+
+The following EBNF (Extended Backus-Naur Form) grammar defines the syntax of
+EXPRESS-Q:
+
+[source,ebnf]
+----
+include::../resources/express-q.ebnf[]
+----
+
+This grammar defines the overall structure of an EXPRESS-Q file, including
+entity mappings, attribute mappings, reference paths, including various types
+of relationships between entities and constraints, and various declarations.
+
+
+=== Semantics
+
+This section describes the meaning and usage of each major construct in EXPRESS-Q.
+
+==== Entity mapping
+
+[source,ebnf]
+----
+entity_mapping = "ENTITY_MAPPING" entity_name ";" newline
+                 [ extensible_decl ]
+                 [ aim_element_decl ]
+                 [ source_decl ]
+                 [ express_ref_decl ]
+                 [ refpath_decl ]
+                 [ alt_map_decl ]
+                 { attribute_mapping }
+                 "END_ENTITY_MAPPING" ";" ;
+----
+
+An entity mapping defines how an ARM entity corresponds to one or more MIM entities or constructs. It encapsulates all the information needed to map a single ARM entity to its MIM counterpart(s).
+
+Usage::
+* Begin with "ENTITY_MAPPING" followed by the ARM entity name.
+* Include optional declarations for extensibility, AIM element, source, EXPRESS references, reference path, and alternative mappings.
+* Include attribute mappings for the entity's attributes.
+* End with "END_ENTITY_MAPPING".
+
+[example]
+----
+ENTITY_MAPPING Product;
+EXTENSIBLE: FALSE;
+AIM_ELEMENT: "product";
+SOURCE: "ISO 10303-41";
+EXPRESS_REF: ["product_definition_schema"];
+REFPATH: {
+  product <= product_definition_formation
+  product_definition_formation.of_product -> product
+};
+ATTRIBUTE_MAPPING id;
+ASSERTION_TO: "id";
+AIM_ELEMENT: "product.id";
+END_ATTRIBUTE_MAPPING;
+END_ENTITY_MAPPING;
+----
+
+==== Extensible declaration
+
+[source,ebnf]
+----
+extensible_decl = "EXTENSIBLE" ":" boolean ";" newline ;
+----
+
+The extensible declaration specifies whether the entity mapping is extensible, corresponding to the extensibility of SELECT types in EXPRESS schemas.
+
+Usage::
+* Use "EXTENSIBLE: TRUE;" for extensible mappings.
+* Use "EXTENSIBLE: FALSE;" for non-extensible mappings.
+
+[example]
+----
+ENTITY_MAPPING ProductCategory;
+EXTENSIBLE: TRUE;
+...
+END_ENTITY_MAPPING;
+----
+
+==== AIM element declaration
+
+[source,ebnf]
+----
+aim_element_decl = "AIM_ELEMENT" ":" string ";" newline ;
+----
+
+The AIM element declaration specifies the corresponding AIM (MIM) element for the ARM entity, providing a direct link between the ARM and MIM schemas.
+
+Usage::
+* Specify the AIM element name as a string.
+
+[example]
+----
+ENTITY_MAPPING Product;
+AIM_ELEMENT: "product";
+...
+END_ENTITY_MAPPING;
+----
+
+==== Source declaration
+
+[source,ebnf]
+----
+source_decl = "SOURCE" ":" string ";" newline ;
+----
+
+The source declaration indicates the source (typically an ISO standard) of the MIM element, which is crucial for traceability and maintaining consistency with relevant standards.
+
+Usage::
+* Specify the source as a string, typically an ISO standard number.
+
+[example]
+----
+ENTITY_MAPPING Product;
+SOURCE: "ISO 10303-41";
+...
+END_ENTITY_MAPPING;
+----
+
+==== EXPRESS reference declaration
+
+[source,ebnf]
+----
+express_ref_decl = "EXPRESS_REF" ":" "[" [ string { "," string } ] "]" ";" newline ;
+----
+
+The EXPRESS reference declaration lists EXPRESS references related to the mapping, used to link the mapping to specific parts of the EXPRESS schemas or other relevant documentation.
+
+Usage::
+* Provide a comma-separated list of references enclosed in square brackets.
+* Use an empty list "[]" if there are no references.
+
+[example]
+----
+ENTITY_MAPPING Product;
+EXPRESS_REF: ["product_definition_schema", "management_resources_schema"];
+...
+END_ENTITY_MAPPING;
+----
+
+
+==== Reference path declaration
+
+===== General
+
+The reference path syntax in EXPRESS-Q is based on the ISO 10303 Mapping
+Specification and is used within the REFPATH sections to define precise mappings
+between ARM and MIM elements. This syntax allows for complex relationships and
+constraints to be expressed concisely.
+
+[source,ebnf]
+----
+refpath_decl = "REFPATH" ":" "{" newline
+               refpath_content
+               "}" ";" newline ;
+----
+
+The reference path declaration defines the detailed mapping between ARM and MIM elements using the reference path syntax described earlier.
+
+Usage::
+* Begin with "REFPATH: {" and end with "};".
+* Each line in the content describes a step in the mapping path.
+* Use indentation to indicate nested structures.
+* Use symbols like "<=", "=>", "->" to indicate relationships between entities and attributes.
+
+[example]
+----
+ENTITY_MAPPING Product;
+REFPATH: {
+  product <= product_definition_formation
+  product_definition_formation.of_product -> product
+  {product.name -> product.name
+   product.description -> product.description}
+};
+...
+END_ENTITY_MAPPING;
+----
+
+
+
+===== Symbols and meaning
+
+The reference path syntax uses several symbols to express relationships and constraints. These symbols are derived from the ISO 10303 Mapping Specification:
+
+`[]`:: 
+Enclosed section constrains multiple MIM elements or sections of the reference
+path required to satisfy an information requirement.
+
+`()`:: 
+Enclosed section constrains multiple MIM elements or sections of the reference
+path identified as alternatives within the mapping.
+
+`{}`:: 
+Enclosed section constrains the reference path to satisfy an information
+requirement.
+
+`<>`:: 
+Enclosed section constrains one or more required reference paths.
+
+`||`:: 
+Enclosed section constrains the supertype entity.
+
+`->`:: 
+The attribute whose name precedes the symbol references the entity or select type whose name follows the symbol.
+
+`<-`:: 
+The entity or select type whose name precedes the symbol is referenced by the entity attribute whose name follows the symbol.
+
+`[i]`:: 
+The attribute whose name precedes the symbol is an aggregate; any element of that aggregate is referred to.
+
+`[n]`:: 
+The attribute whose name precedes the symbol is an ordered aggregate; member n of that aggregate is referred to.
+
+`=>`:: 
+The entity whose name precedes the symbol is a supertype of the entity whose name follows the symbol.
+
+`<=`:: 
+The entity whose name precedes the symbol is a subtype of the entity whose name follows the symbol.
+
+`=`:: 
+The string, select, or enumeration type is constrained to a choice or value.
+
+`\`:: 
+The reference path expression continues on the next line.
+
+`*`:: 
+One or more instances of the relationship entity data type may be assembled in a relationship tree structure.
+
+`--`:: 
+The text following is a comment or introduces a clause reference.
+
+`*>`:: 
+The select or enumeration type whose name precedes the symbol is extended into the select or enumeration type whose name follows the symbol.
+
+`<*`:: 
+The select or enumeration type whose name precedes the symbol is an extension of the select or enumeration type whose name follows the symbol.
+
+`!{}`:: 
+Section enclosed by `{}` indicates a negative constraint placed on the mapping.
+
+
+===== Usage and examples
+
+The reference path syntax is used to define precise mappings between ARM and MIM
+elements. Here are some examples demonstrating various aspects of the syntax:
+
+[example]
+.Simple attribute mapping
+====
+[source]
+----
+REFPATH: {
+  product.id -> id
+}
+----
+====
+
+[example]
+.Subtype relationship
+----
+REFPATH: {
+  mechanical_context <= product_context
+}
+----
+
+[example]
+.Complex mapping with alternatives and constraints
+----
+REFPATH: {
+  shape_representation <= representation
+  {representation.items[i] -> representation_item
+   representation_item => 
+   (geometric_representation_item
+    [geometric_representation_item.dim = 3] |
+    mapped_item)
+  }
+}
+----
+
+[example]
+.Select type extension
+----
+REFPATH: {
+  person_and_organization_select *> organization
+}
+----
+
+[example]
+.Negative constraint
+----
+REFPATH: {
+  product_definition_formation
+  !{product_definition_formation.make_or_buy = bought_item}
+}
+----
+
+===== Validation rules for reference paths
+
+When validating reference paths, the following rules should be applied:
+
+1. All referenced entities and attributes must exist in the corresponding ARM or MIM schema.
+2. The relationships between entities (supertype, subtype, attribute reference) must be consistent with the schema definitions.
+3. Constraints must be syntactically correct and use only attributes or functions that are valid for the constrained entity.
+4. Select type extensions must be consistent with the schema definitions.
+5. Aggregate references (using `[i]` or `[n]`) must be applied only to attributes defined as aggregates in the schema.
+6. Alternative mappings (using parentheses) must all be valid according to the schema.
+7. Negative constraints must be logically consistent with the rest of the mapping and the schema definitions.
+8. The overall structure of the reference path must form a valid path through the schema, connecting the source ARM entity to the target MIM entity or attribute.
+
+
+==== Alternative mapping declaration
+
+[source,ebnf]
+----
+alt_map_decl = "ALT_MAP" ":" "[" [ string { "," string } ] "]" ";" newline ;
+----
+
+The alternative mapping declaration specifies alternative mappings, allowing for flexibility in cases where multiple valid mappings exist.
+
+Usage::
+* Provide a comma-separated list of alternative mappings enclosed in square brackets.
+* Use an empty list "[]" if there are no alternative mappings.
+
+[example]
+----
+ENTITY_MAPPING GeometricRepresentation;
+ALT_MAP: ["shape_representation", "tessellated_shape_representation"];
+...
+END_ENTITY_MAPPING;
+----
+
+==== Attribute mapping
+
+[source,ebnf]
+----
+attribute_mapping = "ATTRIBUTE_MAPPING" attribute_name ";" newline
+                    "ASSERTION_TO" ":" string ";" newline
+                    [ aim_element_decl ]
+                    [ source_decl ]
+                    [ express_ref_decl ]
+                    [ refpath_decl ]
+                    "END_ATTRIBUTE_MAPPING" ";" newline ;
+----
+
+An attribute mapping defines how an individual attribute of an ARM entity corresponds to elements in the MIM schema.
+
+Usage::
+* Begin with "ATTRIBUTE_MAPPING" followed by the attribute name.
+* Specify the ASSERTION_TO value, which indicates the corresponding MIM element or type.
+* Optionally include AIM_ELEMENT, SOURCE, EXPRESS_REF, and REFPATH declarations.
+* End with "END_ATTRIBUTE_MAPPING".
+
+[example]
+----
+ENTITY_MAPPING Product;
+ATTRIBUTE_MAPPING id;
+ASSERTION_TO: "id";
+AIM_ELEMENT: "product.id";
+REFPATH: {
+  product.id -> id
+};
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING name;
+ASSERTION_TO: "label";
+AIM_ELEMENT: "product.name";
+SOURCE: "ISO 10303-41";
+EXPRESS_REF: ["product_definition_schema"];
+REFPATH: {
+  product.name -> name
+};
+END_ATTRIBUTE_MAPPING;
+END_ENTITY_MAPPING;
+----

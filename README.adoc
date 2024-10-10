@@ -1,0 +1,22 @@
+= ELF EXPRESS-Q language reference
+
+This work item belongs to the EXPRESS Language Foundation (ELF).
+
+//image:https://gitlab.com/expresslang/express-q/badges/master/pipeline.svg["Build Status (master)", link="https://gitlab.com/expresslang/express-q/pipelines"]
+
+//This document is available in its rendered forms here:
+
+//* https://metanorma.gitlab.io/express-q/[ISO 10303-81: STEP Vocabulary]
+
+
+== Fetching the document
+
+[source,sh]
+----
+git clone https://github.com/expresslang/express-q/
+----
+
+== Copyright and license
+
+Copyright (c) 2024 EXPRESS Language Foundation.
+

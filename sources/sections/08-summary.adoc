@@ -1,0 +1,38 @@
+== Summary
+
+EXPRESS-Q provides a powerful and flexible language for defining mappings between ARM and MIM schemas in the context of STEP application protocols. By offering a standardized way to express these mappings, EXPRESS-Q facilitates more robust and reliable data exchange in complex engineering and manufacturing environments.
+
+Key features of EXPRESS-Q include:
+
+1. A syntax that is familiar to users of EXPRESS, reducing the learning curve.
+2. The ability to define detailed mappings between ARM and MIM entities and attributes.
+3. Support for complex reference paths, allowing for navigation through intricate schema relationships.
+4. Mechanisms for specifying constraints and alternative mappings.
+5. Clear separation of entity and attribute mappings for improved readability and maintainability.
+
+The validation rules and implementation guidelines provided in this specification aim to ensure consistent interpretation and implementation of EXPRESS-Q across different tools and systems.
+
+== Future considerations
+
+As the use of EXPRESS-Q grows and evolves, several areas may be considered for future enhancements:
+
+=== Extended constraint language
+
+Future versions of EXPRESS-Q might benefit from a more expressive constraint language, allowing for more complex conditions and transformations to be specified within mappings.
+
+=== Integration with other standards
+
+Consideration should be given to how EXPRESS-Q can be integrated with other relevant standards and technologies, such as ontology languages or model transformation frameworks.
+
+=== Tool support
+
+Development of standardized libraries and tools for parsing, validating, and processing EXPRESS-Q files would greatly facilitate its adoption and use.
+
+=== Reverse mapping capabilities
+
+Future versions might include capabilities for defining bi-directional mappings, allowing for the generation of ARM instances from MIM data.
+
+=== Performance optimizations
+
+As EXPRESS-Q is used with increasingly large and complex schemas, performance optimizations in both the language design and implementation guidelines may become necessary.
+

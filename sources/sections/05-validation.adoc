@@ -1,0 +1,36 @@
+== Validation rules
+
+=== General
+
+Validation of EXPRESS-Q files is crucial to ensure the correctness and consistency of mappings between ARM and MIM schemas. The following rules should be applied when validating EXPRESS-Q files.
+
+=== Entity mapping validation
+
+1. Each ENTITY_MAPPING must correspond to an entity defined in the ARM schema.
+2. The AIM_ELEMENT specified must exist in the MIM schema.
+3. The SOURCE referenced must be a valid ISO standard or other recognized source.
+4. All EXPRESS_REF entries must refer to valid EXPRESS schemas.
+5. The REFPATH must form a valid path from the ARM entity to the specified AIM_ELEMENT.
+6. If ALT_MAP is specified, all alternative mappings must be valid MIM entities.
+
+=== Attribute mapping validation
+
+1. Each ATTRIBUTE_MAPPING must correspond to an attribute of the ARM entity being mapped.
+2. The ASSERTION_TO value must be a valid type or entity in the MIM schema.
+3. If specified, the AIM_ELEMENT must exist in the MIM schema.
+4. The REFPATH for an attribute must form a valid path from the ARM attribute to the specified MIM element.
+
+=== Reference path validation
+
+1. All entities and attributes referenced in the REFPATH must exist in either the ARM or MIM schema, as appropriate.
+2. Relationships between entities (e.g., subtype, supertype) must be consistent with the schema definitions.
+3. Constraints specified in the REFPATH must use valid attributes or functions for the entities they constrain.
+4. SELECT type extensions must be consistent with the schema definitions.
+5. Aggregate references (using `[i]` or `[n]`) must only be applied to attributes defined as aggregates in the schema.
+
+=== Overall consistency
+
+1. The complete set of mappings must cover all entities and attributes in the ARM schema.
+2. There should be no conflicting mappings (e.g., two different mappings for the same ARM entity or attribute).
+3. The overall set of mappings should form a consistent and complete transformation from the ARM to the MIM schema.
+
