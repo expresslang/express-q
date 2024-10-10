@@ -2,11 +2,11 @@
 
 This work item belongs to the EXPRESS Language Foundation (ELF).
 
-//image:https://gitlab.com/expresslang/express-q/badges/master/pipeline.svg["Build Status (master)", link="https://gitlab.com/expresslang/express-q/pipelines"]
+image:https://github.com/expresslang/express-q/workflows/docker/badge.svg["Build Status", link="https://github.com/expresslang/express-q/actions?workflow=publish"]
 
-//This document is available in its rendered forms here:
+This document is published here:
 
-//* https://metanorma.gitlab.io/express-q/[ISO 10303-81: STEP Vocabulary]
+* https://expresslang.github.io/express-q/[ELF EXPRESS-Q language reference]
 
 
 == Fetching the document
