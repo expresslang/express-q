@@ -4,45 +4,40 @@
 NOTE: This document is developed and published by the EXPRESS Language
 Foundation. All rights reserved.
 
-ISO (the International Organization for Standardization) is a worldwide
-federation of national standards bodies (ISO member bodies). The work of
-preparing International Standards is normally carried out through ISO technical
-committees. Each member body interested in a subject for which a technical
-committee has been established has the right to be represented on that
-committee. International organizations, governmental and non-governmental, in
-liaison with ISO, also take part in the work. ISO collaborates closely with the
-International Electrotechnical Commission (IEC) on all matters of
-electrotechnical standardization.
+The EXPRESS Language Foundation, maintainer of the EXPRESS data modeling language,
+develops and maintains language standards and technologies. The work of
+preparing EXPRESS standards is carried out through technical working groups.
+Each member interested in a subject for which a working group has been
+established has the right to participate in that group. International
+organizations, both governmental and non-governmental, also take part in the
+work.
 
 The procedures used to develop this document and those intended for its further
-maintenance are described in the ISO/IEC Directives, Part 1. In particular, the
-different approval criteria needed for the different types of ISO documents
-should be noted. This document was drafted in accordance with the editorial
-rules of the ISO/IEC Directives, Part 2 (see
-https://www.iso.org/directives[www.iso.org/directives]).
+maintenance are described in the EXPRESS Language Foundation's documentation
+guidelines. In particular, different approval criteria are needed for different
+types of documents. This document was drafted in accordance with the EXPRESS
+Language Foundation's editorial rules and guidelines.
 
 Attention is drawn to the possibility that some of the elements of this document
-may be the subject of patent rights. ISO shall not be held responsible for
-identifying any or all such patent rights. Details of any patent rights
-identified during the development of the document will be in the Introduction
-and/or on the ISO list of patent declarations received (see
-https://www.iso.org/patents[www.iso.org/patents]).
+may be the subject of patent rights. The EXPRESS Language Foundation shall not
+be held responsible for identifying any or all such patent rights. Details of
+any patent rights identified during the development of the document will be in
+the Introduction.
 
 Any trade name used in this document is information given for the convenience of
 users and does not constitute an endorsement.
 
-For an explanation of the voluntary nature of standards, the meaning of ISO
-specific terms and expressions related to conformity assessment, as well as
-information about ISO's adherence to the World Trade Organization (WTO)
-principles in the Technical Barriers to Trade (TBT), see
-https://www.iso.org/iso/foreword.html[www.iso.org/iso/foreword.html].
+For an explanation of the voluntary nature of standards and the meaning of
+EXPRESS Language Foundation specific terms and expressions related to conformity
+assessment, please refer to the Foundation's documentation guidelines.
 
-This document was prepared by Technical Committee ISO/TC {technical-committee-number}, _{technical-committee}_, Subcommittee SC {subcommittee-number}, _{subcommittee}_.
+This document was prepared by the EXPRESS Language Foundation's Technical
+Working Group.
 
-ISO 10303 is organized as a series of parts, each published separately.
-The structure of ISO 10303 is described in ISO 10303–1.
+EXPRESS is organized as a series of specifications, each published separately.
+The structure of EXPRESS is described in the Core Language Specification.
 
-Each part of ISO 10303 is a member of one of the following series: description
+Each specification is a member of one of the following series: description
 methods, implementation methods, conformance testing methodology and framework,
 integrated generic resources, integrated application resources, application
 protocols, abstract test suites, application interpreted constructs, and

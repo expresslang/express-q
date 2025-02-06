@@ -5,12 +5,10 @@
 :copyright-year: 2024
 :revdate: 2024-10-10
 :language: en
-:title-intro-en: Industrial automation systems and integration
-:title-main-en: Product data representation and exchange
-:title-part-en: Description methods: The EXPRESS-Q language reference manual
-:title-intro-fr: Systèmes d'automatisation industrielle et intégration
-:title-main-fr: Représentation et échange de données de produits
-:title-part-fr: Méthodes de description: Manuel de référence du langage EXPRESS-Q
+:title-intro-en: EXPRESS Language Foundation
+:title-main-en: EXPRESS Query Language Specification
+:title-intro-fr: Fondation pour le langage EXPRESS
+:title-main-fr: Spécification du langage de requête EXPRESS
 :doctype: international-standard
 :docstage: 00
 :docsubstage: 00

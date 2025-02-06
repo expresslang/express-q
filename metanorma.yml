@@ -2,7 +2,7 @@
 metanorma:
   source:
     files:
-      - sources/iso-10303-81.adoc
+      - sources/document.adoc
 
   collection:
     name: EXPRESS-Q language reference

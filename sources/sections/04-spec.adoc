@@ -175,10 +175,10 @@ refpath_decl = "REFPATH" ":" "{" newline
 The reference path declaration defines the detailed mapping between ARM and MIM elements using the reference path syntax described earlier.
 
 Usage::
-* Begin with "REFPATH: {" and end with "};".
+* Begin with `REFPATH: {` and end with `};`.
 * Each line in the content describes a step in the mapping path.
 * Use indentation to indicate nested structures.
-* Use symbols like "<=", "=>", "->" to indicate relationships between entities and attributes.
+* Use symbols like `<=`, `=>`, `->` to indicate relationships between entities and attributes.
 
 [example]
 ----
@@ -199,61 +199,61 @@ END_ENTITY_MAPPING;
 
 The reference path syntax uses several symbols to express relationships and constraints. These symbols are derived from the ISO 10303 Mapping Specification:
 
-`[]`:: 
+`[]`::
 Enclosed section constrains multiple MIM elements or sections of the reference
 path required to satisfy an information requirement.
 
-`()`:: 
+`()`::
 Enclosed section constrains multiple MIM elements or sections of the reference
 path identified as alternatives within the mapping.
 
-`{}`:: 
+`{}`::
 Enclosed section constrains the reference path to satisfy an information
 requirement.
 
-`<>`:: 
+`<>`::
 Enclosed section constrains one or more required reference paths.
 
-`||`:: 
+`||`::
 Enclosed section constrains the supertype entity.
 
-`->`:: 
+`->`::
 The attribute whose name precedes the symbol references the entity or select type whose name follows the symbol.
 
-`<-`:: 
+`<-`::
 The entity or select type whose name precedes the symbol is referenced by the entity attribute whose name follows the symbol.
 
-`[i]`:: 
+`[i]`::
 The attribute whose name precedes the symbol is an aggregate; any element of that aggregate is referred to.
 
-`[n]`:: 
+`[n]`::
 The attribute whose name precedes the symbol is an ordered aggregate; member n of that aggregate is referred to.
 
-`=>`:: 
+`=>`::
 The entity whose name precedes the symbol is a supertype of the entity whose name follows the symbol.
 
-`<=`:: 
+`<=`::
 The entity whose name precedes the symbol is a subtype of the entity whose name follows the symbol.
 
-`=`:: 
+`=`::
 The string, select, or enumeration type is constrained to a choice or value.
 
-`\`:: 
+`\`::
 The reference path expression continues on the next line.
 
-`*`:: 
+`*`::
 One or more instances of the relationship entity data type may be assembled in a relationship tree structure.
 
-`--`:: 
+`--`::
 The text following is a comment or introduces a clause reference.
 
-`*>`:: 
+`*>`::
 The select or enumeration type whose name precedes the symbol is extended into the select or enumeration type whose name follows the symbol.
 
-`<*`:: 
+`<*`::
 The select or enumeration type whose name precedes the symbol is an extension of the select or enumeration type whose name follows the symbol.
 
-`!{}`:: 
+`!{}`::
 Section enclosed by `{}` indicates a negative constraint placed on the mapping.
 
 
@@ -275,14 +275,19 @@ REFPATH: {
 
 [example]
 .Subtype relationship
+====
+[source]
 ----
 REFPATH: {
   mechanical_context <= product_context
 }
 ----
+====
 
 [example]
 .Complex mapping with alternatives and constraints
+====
+[source]
 ----
 REFPATH: {
   shape_representation <= representation
@@ -294,23 +299,30 @@ REFPATH: {
   }
 }
 ----
+====
 
 [example]
 .Select type extension
+====
+[source]
 ----
 REFPATH: {
   person_and_organization_select *> organization
 }
 ----
+====
 
 [example]
 .Negative constraint
+====
+[source]
 ----
 REFPATH: {
   product_definition_formation
   !{product_definition_formation.make_or_buy = bought_item}
 }
 ----
+====
 
 ===== Validation rules for reference paths
 
