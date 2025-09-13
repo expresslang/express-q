@@ -7,3 +7,8 @@ reference-docs/___these_are_the_earlier_editions_original_files___.txt
 /_site
 /_files
 /relaton
+
+# Build artifacts
+*.html
+*.log.txt
+*.err.html
