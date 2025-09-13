@@ -328,14 +328,14 @@ REFPATH: {
 
 When validating reference paths, the following rules should be applied:
 
-1. All referenced entities and attributes must exist in the corresponding ARM or MIM schema.
-2. The relationships between entities (supertype, subtype, attribute reference) must be consistent with the schema definitions.
-3. Constraints must be syntactically correct and use only attributes or functions that are valid for the constrained entity.
-4. Select type extensions must be consistent with the schema definitions.
-5. Aggregate references (using `[i]` or `[n]`) must be applied only to attributes defined as aggregates in the schema.
-6. Alternative mappings (using parentheses) must all be valid according to the schema.
-7. Negative constraints must be logically consistent with the rest of the mapping and the schema definitions.
-8. The overall structure of the reference path must form a valid path through the schema, connecting the source ARM entity to the target MIM entity or attribute.
+1. All referenced entities and attributes shall exist in the corresponding ARM or MIM schema.
+2. The relationships between entities (supertype, subtype, attribute reference) shall be consistent with the schema definitions.
+3. Constraints shall be syntactically correct and use only attributes or functions that are valid for the constrained entity.
+4. Select type extensions shall be consistent with the schema definitions.
+5. Aggregate references (using `[i]` or `[n]`) shall be applied only to attributes defined as aggregates in the schema.
+6. Alternative mappings (using parentheses) shall all be valid according to the schema.
+7. Negative constraints shall be logically consistent with the rest of the mapping and the schema definitions.
+8. The overall structure of the reference path shall form a valid path through the schema, connecting the source ARM entity to the target MIM entity or attribute.
 
 
 ==== Alternative mapping declaration
