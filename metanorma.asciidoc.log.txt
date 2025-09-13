@@ -1,0 +1,36 @@
+= X
+A
+:semantic-metadata-headless: true
+:no-isobib:
+:novalid:
+:!sectids:
+
+== copyright-statement
+
+
+
+[[boilerplate-copyright-default]]
+=== {blank}
+
+[[boilerplate-year]]
+&#xa9; span:std_publisher[ISO&#xa0;]span:date[2024]
+
+[[boilerplate-message]]
+All rights reserved. Unless otherwise specified, or required in the context of its implementation,
+no part of this publication may be
+reproduced or utilized otherwise in any form or by any means, electronic or
+mechanical, including photocopying, or posting on the internet or an intranet,
+without prior written permission. Permission can be requested from either ISO
+at the address below or ISO's member body in the country of the requester.
+
+[[boilerplate-address]]
+[align=left]
+ISO copyright office +
+CP 401 &#x2022; Ch. de Blandonnet 8 +
+CH-1214 Vernier, Geneva +
+Phone: +41 22 749 01 11 +
+Email: copyright@iso.org +
+Website: link:++https://www.iso.org/++[www.iso.org]
+
+[[boilerplate-place]]
+Published in Switzerland
