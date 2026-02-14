@@ -10,8 +10,12 @@ introduces new constructs specific to querying and mapping.
 An EXPRESS-Q file typically consists of one or more entity mappings, each of
 which defines how an ARM entity and its attributes correspond to MIM elements.
 These mappings can include various declarations such as extensibility, AIM
-elements, sources, EXPRESS references, reference paths, and alternative
+elements, EXPRESS references, reference paths, and alternative
 mappings.
+
+Entity names, AIM element names, and assertion targets use EXPRESS links to
+identify both the schema and element, enabling cross-document reference
+resolution in published documentation.
 
 === EBNF grammar
 
@@ -32,14 +36,40 @@ of relationships between entities and constraints, and various declarations.
 
 This section describes the meaning and usage of each major construct in EXPRESS-Q.
 
+==== EXPRESS link
+
+[source,ebnf]
+----
+express_link = "<<express:" schema_name "." element_name "," display_name ">>" ;
+----
+
+An EXPRESS link is a cross-reference that identifies an element within a
+specific EXPRESS schema. It encodes the schema name, element name, and a
+display name used for rendering.
+
+The schema origin of a referenced element is derived from the EXPRESS link,
+eliminating the need for a separate source declaration.
+
+Usage::
+* Use in entity mapping names to identify the ARM entity and its schema.
+* Use in AIM_ELEMENT declarations to identify the MIM entity and its schema.
+* Use in ASSERTION_TO declarations to identify the target entity and its schema.
+* The `display_name` is used for rendering in published documentation.
+
+[example]
+----
+<<express:Activity_arm.Activity,Activity>>
+<<express:action_schema.executed_action,executed_action>>
+<<express:Activity_method_arm.Activity_method,Activity_method>>
+----
+
 ==== Entity mapping
 
 [source,ebnf]
 ----
-entity_mapping = "ENTITY_MAPPING" entity_name ";" newline
+entity_mapping = "ENTITY_MAPPING" entity_ref ";" newline
                  [ extensible_decl ]
                  [ aim_element_decl ]
-                 [ source_decl ]
                  [ express_ref_decl ]
                  [ refpath_decl ]
                  [ alt_map_decl ]
@@ -49,26 +79,33 @@ entity_mapping = "ENTITY_MAPPING" entity_name ";" newline
 
 An entity mapping defines how an ARM entity corresponds to one or more MIM entities or constructs. It encapsulates all the information needed to map a single ARM entity to its MIM counterpart(s).
 
+The entity name shall be an EXPRESS link identifying the ARM entity and its
+schema, or a plain entity name for backward compatibility.
+
 Usage::
-* Begin with "ENTITY_MAPPING" followed by the ARM entity name.
-* Include optional declarations for extensibility, AIM element, source, EXPRESS references, reference path, and alternative mappings.
+* Begin with "ENTITY_MAPPING" followed by the ARM entity reference (EXPRESS link or plain name).
+* Include optional declarations for extensibility, AIM element, EXPRESS references, reference path, and alternative mappings.
 * Include attribute mappings for the entity's attributes.
 * End with "END_ENTITY_MAPPING".
 
 [example]
 ----
-ENTITY_MAPPING Product;
+ENTITY_MAPPING <<express:Activity_arm.Activity,Activity>>;
 EXTENSIBLE: FALSE;
-AIM_ELEMENT: "product";
-SOURCE: "ISO 10303-41";
-EXPRESS_REF: ["product_definition_schema"];
+AIM_ELEMENT: "<<express:action_schema.executed_action,executed_action>>";
+EXPRESS_REF: ["action_schema"];
 REFPATH: {
-  product <= product_definition_formation
-  product_definition_formation.of_product -> product
+  executed_action <= action
 };
-ATTRIBUTE_MAPPING id;
-ASSERTION_TO: "id";
-AIM_ELEMENT: "product.id";
+ATTRIBUTE_MAPPING chosen_method;
+ASSERTION_TO: "<<express:Activity_method_arm.Activity_method,Activity_method>>";
+AIM_ELEMENT: "PATH";
+REFPATH: {
+  executed_action
+  executed_action <= action
+  action.chosen_method -> action_method
+  action_method
+};
 END_ATTRIBUTE_MAPPING;
 END_ENTITY_MAPPING;
 ----
@@ -88,7 +125,7 @@ Usage::
 
 [example]
 ----
-ENTITY_MAPPING ProductCategory;
+ENTITY_MAPPING <<express:Activity_arm.activity_item,activity_item>>;
 EXTENSIBLE: TRUE;
 ...
 END_ENTITY_MAPPING;
@@ -98,41 +135,54 @@ END_ENTITY_MAPPING;
 
 [source,ebnf]
 ----
-aim_element_decl = "AIM_ELEMENT" ":" string ";" newline ;
+aim_element_decl = "AIM_ELEMENT" ":" ( express_link | string ) ";" newline ;
 ----
 
-The AIM element declaration specifies the corresponding AIM (MIM) element for the ARM entity, providing a direct link between the ARM and MIM schemas.
+The AIM element declaration specifies the corresponding AIM (MIM) element for
+the ARM entity, providing a direct link between the ARM and MIM schemas.
+
+When the AIM element is an entity or type defined in an EXPRESS schema, the
+value shall be an EXPRESS link. When the AIM element is a keyword (such as
+`PATH`, `IDENTICAL MAPPING`, or `NO MAPPING EXTENSION PROVIDED`) or a dotted
+attribute path (such as `action.name`), the value shall be a plain string.
 
 Usage::
-* Specify the AIM element name as a string.
+* Specify the AIM element as an EXPRESS link for entity references.
+* Specify the AIM element as a plain string for keywords and attribute paths.
 
 [example]
+.Entity-level AIM element with EXPRESS link
 ----
-ENTITY_MAPPING Product;
-AIM_ELEMENT: "product";
+ENTITY_MAPPING <<express:Activity_arm.Activity,Activity>>;
+AIM_ELEMENT: "<<express:action_schema.executed_action,executed_action>>";
 ...
 END_ENTITY_MAPPING;
 ----
 
-==== Source declaration
-
-[source,ebnf]
+[example]
+.Attribute-level AIM element with plain string
 ----
-source_decl = "SOURCE" ":" string ";" newline ;
+ATTRIBUTE_MAPPING name;
+ASSERTION_TO: "name";
+AIM_ELEMENT: "action.name";
+END_ATTRIBUTE_MAPPING;
 ----
-
-The source declaration indicates the source (typically an ISO standard) of the MIM element, which is crucial for traceability and maintaining consistency with relevant standards.
-
-Usage::
-* Specify the source as a string, typically an ISO standard number.
 
 [example]
+.Attribute-level AIM element with PATH keyword
 ----
-ENTITY_MAPPING Product;
-SOURCE: "ISO 10303-41";
-...
-END_ENTITY_MAPPING;
+ATTRIBUTE_MAPPING chosen_method;
+ASSERTION_TO: "<<express:Activity_method_arm.Activity_method,Activity_method>>";
+AIM_ELEMENT: "PATH";
+REFPATH: {
+  executed_action
+  executed_action <= action
+  action.chosen_method -> action_method
+  action_method
+};
+END_ATTRIBUTE_MAPPING;
 ----
+
 
 ==== EXPRESS reference declaration
 
@@ -149,8 +199,8 @@ Usage::
 
 [example]
 ----
-ENTITY_MAPPING Product;
-EXPRESS_REF: ["product_definition_schema", "management_resources_schema"];
+ENTITY_MAPPING <<express:Activity_arm.Activity,Activity>>;
+EXPRESS_REF: ["action_schema", "management_resources_schema"];
 ...
 END_ENTITY_MAPPING;
 ----
@@ -182,12 +232,10 @@ Usage::
 
 [example]
 ----
-ENTITY_MAPPING Product;
+ENTITY_MAPPING <<express:Activity_arm.Activity,Activity>>;
 REFPATH: {
-  product <= product_definition_formation
-  product_definition_formation.of_product -> product
-  {product.name -> product.name
-   product.description -> product.description}
+  executed_action <= action
+  action.chosen_method -> action_method
 };
 ...
 END_ENTITY_MAPPING;
@@ -292,7 +340,7 @@ REFPATH: {
 REFPATH: {
   shape_representation <= representation
   {representation.items[i] -> representation_item
-   representation_item => 
+   representation_item =>
    (geometric_representation_item
     [geometric_representation_item.dim = 3] |
     mapped_item)
@@ -364,9 +412,8 @@ END_ENTITY_MAPPING;
 [source,ebnf]
 ----
 attribute_mapping = "ATTRIBUTE_MAPPING" attribute_name ";" newline
-                    "ASSERTION_TO" ":" string ";" newline
+                    "ASSERTION_TO" ":" ( express_link | string ) ";" newline
                     [ aim_element_decl ]
-                    [ source_decl ]
                     [ express_ref_decl ]
                     [ refpath_decl ]
                     "END_ATTRIBUTE_MAPPING" ";" newline ;
@@ -374,31 +421,42 @@ attribute_mapping = "ATTRIBUTE_MAPPING" attribute_name ";" newline
 
 An attribute mapping defines how an individual attribute of an ARM entity corresponds to elements in the MIM schema.
 
+The ASSERTION_TO value shall be an EXPRESS link when the attribute refers to an
+entity data type or a SELECT type, and a plain string otherwise.
+
 Usage::
 * Begin with "ATTRIBUTE_MAPPING" followed by the attribute name.
-* Specify the ASSERTION_TO value, which indicates the corresponding MIM element or type.
-* Optionally include AIM_ELEMENT, SOURCE, EXPRESS_REF, and REFPATH declarations.
+* Specify the ASSERTION_TO value as an EXPRESS link or plain string.
+* Optionally include AIM_ELEMENT, EXPRESS_REF, and REFPATH declarations.
 * End with "END_ATTRIBUTE_MAPPING".
 
 [example]
+.Attribute mapping with EXPRESS link assertion
 ----
-ENTITY_MAPPING Product;
-ATTRIBUTE_MAPPING id;
-ASSERTION_TO: "id";
-AIM_ELEMENT: "product.id";
+ENTITY_MAPPING <<express:Activity_arm.Activity,Activity>>;
+ATTRIBUTE_MAPPING chosen_method;
+ASSERTION_TO: "<<express:Activity_method_arm.Activity_method,Activity_method>>";
+AIM_ELEMENT: "PATH";
 REFPATH: {
-  product.id -> id
-};
-END_ATTRIBUTE_MAPPING;
-
-ATTRIBUTE_MAPPING name;
-ASSERTION_TO: "label";
-AIM_ELEMENT: "product.name";
-SOURCE: "ISO 10303-41";
-EXPRESS_REF: ["product_definition_schema"];
-REFPATH: {
-  product.name -> name
+  executed_action
+  executed_action <= action
+  action.chosen_method -> action_method
+  action_method
 };
 END_ATTRIBUTE_MAPPING;
 END_ENTITY_MAPPING;
+----
+
+[example]
+.Attribute mapping with plain string AIM element
+----
+ATTRIBUTE_MAPPING name;
+ASSERTION_TO: "name";
+AIM_ELEMENT: "action.name";
+REFPATH: {
+  executed_action
+  executed_action <= action
+  action.name
+};
+END_ATTRIBUTE_MAPPING;
 ----

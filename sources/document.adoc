@@ -48,4 +48,6 @@ include::sections/08-summary.adoc[]
 
 include::sections/aa-example.adoc[]
 
+include::sections/ab-yaml-serialization.adoc[]
+
 include::sections/az-bibliography.adoc[]

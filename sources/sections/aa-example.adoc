@@ -1,141 +1,166 @@
 [appendix,obligation=informative]
 == Complete EXPRESS-Q file example
 
-This annex provides a complete example of an EXPRESS-Q file, demonstrating
-various features of the language in a cohesive context.
+This annex provides a complete example of an EXPRESS-Q file for the Activity
+module, demonstrating EXPRESS links for cross-schema references.
 
 [source]
 ----
--- Example EXPRESS-Q file for a simplified product data model
+-- EXPRESS-Q file for the Activity module (ISO 10303-1047)
 
-ENTITY_MAPPING Product;
+ENTITY_MAPPING <<express:Activity_arm.Activity,Activity>>;
 EXTENSIBLE: FALSE;
-AIM_ELEMENT: "product";
-SOURCE: "ISO 10303-41";
-EXPRESS_REF: ["product_definition_schema"];
+AIM_ELEMENT: "<<express:action_schema.executed_action,executed_action>>";
+EXPRESS_REF: ["action_schema", "basic_attribute_schema"];
 REFPATH: {
-  product <= product_definition_formation
-  product_definition_formation.of_product -> product
+  executed_action <= action
 };
 
 ATTRIBUTE_MAPPING id;
-ASSERTION_TO: "identifier";
-AIM_ELEMENT: "product.id";
+ASSERTION_TO: "id";
+AIM_ELEMENT: "id_attribute.attribute_value";
 REFPATH: {
-  product.id -> id
+  executed_action
+  executed_action <= action
+  action <- id_attribute.identified_item
+  id_attribute.attribute_value
 };
 END_ATTRIBUTE_MAPPING;
 
 ATTRIBUTE_MAPPING name;
-ASSERTION_TO: "label";
-AIM_ELEMENT: "product.name";
+ASSERTION_TO: "name";
+AIM_ELEMENT: "action.name";
 REFPATH: {
-  product.name -> name
+  executed_action
+  executed_action <= action
+  action.name
 };
 END_ATTRIBUTE_MAPPING;
 
 ATTRIBUTE_MAPPING description;
-ASSERTION_TO: "text";
-AIM_ELEMENT: "product.description";
+ASSERTION_TO: "description";
+AIM_ELEMENT: "action.description";
 REFPATH: {
-  product.description -> description
+  executed_action
+  executed_action <= action
+  action.description
 };
 END_ATTRIBUTE_MAPPING;
 
-ATTRIBUTE_MAPPING category;
-ASSERTION_TO: "product_category";
+ATTRIBUTE_MAPPING chosen_method;
+ASSERTION_TO: "<<express:Activity_method_arm.Activity_method,Activity_method>>";
+AIM_ELEMENT: "PATH";
 REFPATH: {
-  product <- product_category_assignment.products[i]
-  product_category_assignment -> product_category_assignment.assigned_category
-  product_category_assignment.assigned_category -> product_category
+  executed_action
+  executed_action <= action
+  action.chosen_method -> action_method
+  action_method
 };
 END_ATTRIBUTE_MAPPING;
 
 END_ENTITY_MAPPING;
 
-ENTITY_MAPPING Assembly;
+ENTITY_MAPPING <<express:Activity_arm.Activity_relationship,Activity_relationship>>;
 EXTENSIBLE: FALSE;
-AIM_ELEMENT: "product";
-SOURCE: "ISO 10303-44";
-EXPRESS_REF: ["product_structure_schema"];
-REFPATH: {
-  product <= product_definition_formation
-  product_definition_formation.of_product -> product
-  [product <- product_definition_formation
-   product_definition_formation <- product_definition
-   product_definition <- assembly_component_usage.relating_product_definition]
-};
+AIM_ELEMENT: "<<express:action_schema.action_relationship,action_relationship>>";
 
-ATTRIBUTE_MAPPING components;
-ASSERTION_TO: "SET OF AssemblyComponent";
+ATTRIBUTE_MAPPING name;
+ASSERTION_TO: "name";
+AIM_ELEMENT: "action_relationship.name";
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING description;
+ASSERTION_TO: "description";
+AIM_ELEMENT: "action_relationship.description";
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING related_activity;
+ASSERTION_TO: "<<express:Activity_arm.Activity,Activity>>";
+AIM_ELEMENT: "PATH";
 REFPATH: {
-  product <- product_definition_formation
-  product_definition_formation <- product_definition
-  product_definition <- assembly_component_usage.relating_product_definition
-  assembly_component_usage -> assembly_component_usage.related_product_definition
-  assembly_component_usage.related_product_definition -> product_definition
-  product_definition -> product_definition_formation
-  product_definition_formation -> product
+  action_relationship
+  action_relationship.related_action -> action
+  action => executed_action
+};
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING relating_activity;
+ASSERTION_TO: "<<express:Activity_arm.Activity,Activity>>";
+AIM_ELEMENT: "PATH";
+REFPATH: {
+  action_relationship
+  action_relationship.relating_action -> action
+  action => executed_action
 };
 END_ATTRIBUTE_MAPPING;
 
 END_ENTITY_MAPPING;
 
-ENTITY_MAPPING AssemblyComponent;
+ENTITY_MAPPING <<express:Activity_arm.Activity_status,Activity_status>>;
 EXTENSIBLE: FALSE;
-AIM_ELEMENT: "product";
-SOURCE: "ISO 10303-44";
-EXPRESS_REF: ["product_structure_schema"];
-REFPATH: {
-  product <= product_definition_formation
-  product_definition_formation.of_product -> product
-};
+AIM_ELEMENT: "<<express:action_schema.action_status,action_status>>";
 
-ATTRIBUTE_MAPPING quantity;
-ASSERTION_TO: "measure_with_unit";
+ATTRIBUTE_MAPPING assigned_activity;
+ASSERTION_TO: "<<express:Activity_arm.Activity,Activity>>";
+AIM_ELEMENT: "PATH";
 REFPATH: {
-  product <- product_definition_formation
-  product_definition_formation <- product_definition
-  product_definition <- assembly_component_usage
-  assembly_component_usage.quantity -> measure_with_unit
+  action_status
+  action_status.assigned_action -> executed_action
 };
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING status;
+ASSERTION_TO: "status";
+AIM_ELEMENT: "action_status.status";
 END_ATTRIBUTE_MAPPING;
 
 END_ENTITY_MAPPING;
 
-ENTITY_MAPPING GeometricRepresentation;
-EXTENSIBLE: TRUE;
-ALT_MAP: ["shape_representation", "tessellated_shape_representation"];
-SOURCE: "ISO 10303-42";
-EXPRESS_REF: ["geometric_model_schema"];
+ENTITY_MAPPING <<express:Activity_arm.Applied_activity_assignment,Applied_activity_assignment>>;
+EXTENSIBLE: FALSE;
+AIM_ELEMENT: "<<express:Activity_mim.applied_action_assignment,applied_action_assignment>>";
+EXPRESS_REF: ["management_resources_schema"];
 
+ATTRIBUTE_MAPPING assigned_activity;
+ASSERTION_TO: "<<express:Activity_arm.Activity,Activity>>";
+AIM_ELEMENT: "PATH";
 REFPATH: {
-  (shape_representation <= representation
-   [representation.context_of_items->geometric_representation_context]) |
-  (tessellated_shape_representation <= representation
-   [representation.context_of_items->geometric_representation_context])
+  applied_action_assignment
+  applied_action_assignment <= action_assignment
+  action_assignment
+  action_assignment.assigned_action -> action
+  action => executed_action
 };
+END_ATTRIBUTE_MAPPING;
 
 ATTRIBUTE_MAPPING items;
-ASSERTION_TO: "SET OF geometric_representation_item";
+ASSERTION_TO: "<<express:Activity_arm.activity_item,activity_item>>";
+AIM_ELEMENT: "PATH";
 REFPATH: {
-  representation.items[i] -> geometric_representation_item
+  applied_action_assignment
+  applied_action_assignment.items[i] -> action_items
+};
+END_ATTRIBUTE_MAPPING;
+
+ATTRIBUTE_MAPPING role;
+ASSERTION_TO: "role";
+AIM_ELEMENT: "object_role.name";
+REFPATH: {
+  applied_action_assignment
+  applied_action_assignment <= action_assignment
+  action_assignment.role -> object_role
+  object_role.name
 };
 END_ATTRIBUTE_MAPPING;
 
 END_ENTITY_MAPPING;
 ----
 
-This example demonstrates a simplified product data model, including mappings
-for products, assemblies, assembly components, and geometric representations. It
-showcases various features of EXPRESS-Q, including:
+This example demonstrates the complete mapping for the Activity module,
+including:
 
-- Entity and attribute mappings
-- Reference paths with complex relationships
-- Alternative mappings
-- Constraints within reference paths
-- Use of SELECT types (implied by the EXTENSIBLE: TRUE; in GeometricRepresentation)
-
-This example is not exhaustive but provides a realistic scenario that
-illustrates how EXPRESS-Q can be used to define mappings between ARM and MIM
-schemas in a STEP application protocol context.
+- EXPRESS links for entity names (`<<express:Activity_arm.Activity,Activity>>`)
+- EXPRESS links for AIM elements (`<<express:action_schema.executed_action,executed_action>>`)
+- EXPRESS links for cross-module assertions (`<<express:Activity_method_arm.Activity_method,Activity_method>>`)
+- Plain string AIM elements for attribute paths (`action.name`) and keywords (`PATH`)
+- Reference paths with subtype, supertype, and attribute relationships

@@ -4,20 +4,26 @@
 
 Validation of EXPRESS-Q files is crucial to ensure the correctness and consistency of mappings between ARM and MIM schemas. The following rules should be applied when validating EXPRESS-Q files.
 
+=== EXPRESS link validation
+
+1. Each EXPRESS link shall conform to the syntax `<<express:schema_name.element_name,display_name>>`.
+2. The `schema_name` shall identify a valid EXPRESS schema accessible to the mapping.
+3. The `element_name` shall identify an entity, type, or attribute defined in or imported into the referenced schema.
+4. The `display_name` shall match the `element_name`.
+
 === Entity mapping validation
 
-1. Each ENTITY_MAPPING shall correspond to an entity defined in the ARM schema.
-2. The AIM_ELEMENT specified shall exist in the MIM schema.
-3. The SOURCE referenced shall be a valid ISO standard or other recognized source.
-4. All EXPRESS_REF entries shall refer to valid EXPRESS schemas.
-5. The REFPATH shall form a valid path from the ARM entity to the specified AIM_ELEMENT.
-6. If ALT_MAP is specified, all alternative mappings shall be valid MIM entities.
+1. Each ENTITY_MAPPING shall correspond to an entity or type defined in the ARM schema. When the entity name is an EXPRESS link, the referenced entity shall exist in the referenced ARM schema.
+2. The AIM_ELEMENT specified shall exist in the MIM schema or be a recognized keyword (`PATH`, `IDENTICAL MAPPING`, `NO MAPPING EXTENSION PROVIDED`, `/SUPERTYPE(...)/ `, `/SUBTYPE(...)/`). When the AIM element is an EXPRESS link, the referenced entity shall exist in the referenced MIM or resource schema.
+3. All EXPRESS_REF entries shall refer to valid EXPRESS schemas.
+4. The REFPATH shall form a valid path from the ARM entity to the specified AIM_ELEMENT.
+5. If ALT_MAP is specified, all alternative mappings shall be valid MIM entities.
 
 === Attribute mapping validation
 
 1. Each ATTRIBUTE_MAPPING shall correspond to an attribute of the ARM entity being mapped.
-2. The ASSERTION_TO value shall be a valid type or entity in the MIM schema.
-3. If specified, the AIM_ELEMENT shall exist in the MIM schema.
+2. The ASSERTION_TO value shall be a valid type or entity in the ARM or MIM schema, as appropriate. When the value is an EXPRESS link, the referenced entity shall exist in the referenced schema.
+3. If specified, the AIM_ELEMENT shall exist in the MIM schema or be a recognized keyword or dotted attribute path.
 4. The REFPATH for an attribute shall form a valid path from the ARM attribute to the specified MIM element.
 
 === Reference path validation
