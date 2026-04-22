@@ -1,0 +1,275 @@
+[appendix,obligation=normative]
+== YAML serialization
+
+=== General
+
+This annex defines the YAML serialization format for EXPRESS-Q mapping
+specifications. Each application module's mapping specification is stored as a
+YAML file named `mapping.yaml` in the module's schema directory.
+
+The YAML serialization provides a machine-readable representation of the
+EXPRESS-Q constructs defined in this specification, suitable for automated
+processing, validation, and document generation.
+
+=== File structure
+
+A mapping YAML file has a single top-level key `ae` (application elements)
+containing an ordered list of entity mappings.
+
+[source,yaml]
+----
+---
+ae:
+- entity: ...
+  aimelt: ...
+  aa:
+  - attribute: ...
+    ...
+----
+
+=== Schema
+
+The following describes each field in the YAML serialization.
+
+==== Entity mapping
+
+Each entry in the `ae` list represents an entity mapping and contains the
+following fields:
+
+`entity`:: (required) The ARM entity being mapped. The value shall be an
+EXPRESS link identifying the ARM schema and entity:
+`<<express:Schema_arm.Entity_name,Entity_name>>`. +
+For backward compatibility, a plain entity name is also accepted.
+
+`aimelt`:: (required) The corresponding MIM element. The value shall be one of:
+
+* An EXPRESS link for entity references:
+`<<express:schema_name.entity_name,entity_name>>`
+* A plain string for keywords: `PATH`, `IDENTICAL MAPPING`,
+`NO MAPPING EXTENSION PROVIDED`
+* A plain string for `/SUPERTYPE(...)/`, `/SUBTYPE(...)/`, or
+`/MAPPING_OF(...)/` constructs
+* A plain string for dotted attribute paths: `entity.attribute`
+* A parenthesized or bracketed list of the above for multiple MIM elements
+
+`extensible`:: (optional) Boolean indicating whether the mapping is extensible.
+
+`alt_map`:: (optional) List of alternative MIM entity names.
+
+`original_module`:: (optional) Name of the module from which this mapping
+originates (for inherited mappings).
+
+`description`:: (optional) Additional descriptive text.
+
+`aa`:: (optional) List of attribute mappings for this entity.
+
+==== Attribute mapping
+
+Each entry in the `aa` list represents an attribute mapping and contains the
+following fields:
+
+`attribute`:: (required) The ARM attribute name being mapped.
+
+`aimelt`:: (optional) The corresponding MIM element. At the attribute level,
+the value is a plain string (not an EXPRESS link). Typical values include:
+
+* A dotted attribute path: `action.name`
+* The keyword `PATH` (when assertion_to is present)
+* The keyword `IDENTICAL MAPPING`
+
+`assertion_to`:: (optional) The target entity or type that this attribute
+refers to. When present, the value shall be an EXPRESS link:
+`<<express:Schema_arm.Entity_name,Entity_name>>`. +
+The special value `*` indicates any type. +
+For backward compatibility, a plain entity name is also accepted.
+
+`refpath`:: (optional) The reference path specifying the detailed mapping
+between ARM and MIM elements.
+
+==== Reference path
+
+The `refpath` field contains an object with a single key:
+
+`content`:: (required) A multi-line string containing the reference path
+expression using the syntax defined in <<reference-path-declaration>>.
+Lines are separated by newline characters. The YAML block scalar `|-`
+is used to preserve line breaks and strip the trailing newline.
+
+[source,yaml]
+----
+refpath:
+  content: |-
+    executed_action
+    executed_action <= action
+    action.chosen_method -> action_method
+    action_method
+----
+
+=== EXPRESS link format
+
+EXPRESS links in YAML values use the following syntax:
+
+[source]
+----
+<<express:schema_name.element_name,display_name>>
+----
+
+Where:
+
+`schema_name`:: The name of the EXPRESS schema containing the element.
+`element_name`:: The name of the entity, type, or function within the schema.
+`display_name`:: The name displayed in rendered documentation (shall match
+`element_name`).
+
+The schema name encodes the origin of the referenced element, eliminating the
+need for a separate `source` field.
+
+=== Correspondence to EBNF constructs
+
+The following table shows the correspondence between EBNF constructs and YAML
+keys:
+
+[cols="2,2,3",options="header"]
+|===
+| EBNF construct | YAML key | Notes
+
+| `ENTITY_MAPPING entity_ref`
+| `ae[].entity`
+| EXPRESS link or plain name
+
+| `aim_element_decl`
+| `ae[].aimelt` or `ae[].aa[].aimelt`
+| Entity-level: EXPRESS link or string; attribute-level: plain string
+
+| `ASSERTION_TO`
+| `ae[].aa[].assertion_to`
+| EXPRESS link or plain string
+
+| `extensible_decl`
+| `ae[].extensible`
+| Boolean
+
+| `alt_map_decl`
+| `ae[].alt_map`
+| List of strings
+
+| `refpath_decl`
+| `ae[].aa[].refpath.content`
+| Multi-line string
+
+| `express_ref_decl`
+| Not serialized
+| Schema references are encoded in EXPRESS links
+
+| `source_decl`
+| Not serialized
+| Source is derived from EXPRESS links
+|===
+
+=== Complete example
+
+The following shows the complete YAML serialization of the Activity module
+mapping specification:
+
+[source,yaml]
+----
+---
+ae:
+- entity: <<express:Activity_arm.Activity,Activity>>
+  aimelt: <<express:action_schema.executed_action,executed_action>>
+  aa:
+  - attribute: name
+    aimelt: action.name
+    refpath:
+      content: |-
+        executed_action
+        executed_action <= action
+        action.name
+  - attribute: description
+    aimelt: action.description
+    refpath:
+      content: |-
+        executed_action
+        executed_action <= action
+        action.description
+  - attribute: chosen_method
+    assertion_to: <<express:Activity_method_arm.Activity_method,Activity_method>>
+    aimelt: PATH
+    refpath:
+      content: |-
+        executed_action
+        executed_action <= action
+        action.chosen_method -> action_method
+        action_method
+  - attribute: id
+    aimelt: id_attribute.attribute_value
+    refpath:
+      content: |-
+        executed_action
+        executed_action <= action
+        action <- id_attribute.identified_item
+        id_attribute.attribute_value
+- entity: <<express:Activity_arm.Activity_relationship,Activity_relationship>>
+  aimelt: <<express:action_schema.action_relationship,action_relationship>>
+  aa:
+  - attribute: description
+    aimelt: action_relationship.description
+  - attribute: name
+    aimelt: action_relationship.name
+  - attribute: related_activity
+    assertion_to: <<express:Activity_arm.Activity,Activity>>
+    aimelt: PATH
+    refpath:
+      content: |-
+        action_relationship
+        action_relationship.related_action -> action
+        action => executed_action
+  - attribute: relating_activity
+    assertion_to: <<express:Activity_arm.Activity,Activity>>
+    aimelt: PATH
+    refpath:
+      content: |-
+        action_relationship
+        action_relationship.relating_action -> action
+        action => executed_action
+- entity: <<express:Activity_arm.Activity_status,Activity_status>>
+  aimelt: <<express:action_schema.action_status,action_status>>
+  aa:
+  - attribute: assigned_activity
+    assertion_to: <<express:Activity_arm.Activity,Activity>>
+    aimelt: PATH
+    refpath:
+      content: |-
+        action_status
+        action_status.assigned_action -> executed_action
+  - attribute: status
+    aimelt: action_status.status
+- entity: <<express:Activity_arm.Applied_activity_assignment,Applied_activity_assignment>>
+  aimelt: <<express:Activity_mim.applied_action_assignment,applied_action_assignment>>
+  aa:
+  - attribute: assigned_activity
+    assertion_to: <<express:Activity_arm.Activity,Activity>>
+    aimelt: PATH
+    refpath:
+      content: |-
+        applied_action_assignment
+        applied_action_assignment <= action_assignment
+        action_assignment
+        action_assignment.assigned_action -> action
+        action => executed_action
+  - attribute: items
+    assertion_to: <<express:Activity_arm.activity_item,activity_item>>
+    aimelt: PATH
+    refpath:
+      content: |-
+        applied_action_assignment
+        applied_action_assignment.items[i] -> action_items
+  - attribute: role
+    aimelt: object_role.name
+    refpath:
+      content: |-
+        applied_action_assignment
+        applied_action_assignment <= action_assignment
+        action_assignment.role -> object_role
+        object_role.name
+----

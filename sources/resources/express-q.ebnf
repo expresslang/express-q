@@ -1,9 +1,8 @@
 express_q_file = { entity_mapping } ;
 
-entity_mapping = "ENTITY_MAPPING" entity_name ";" newline
+entity_mapping = "ENTITY_MAPPING" entity_ref ";" newline
                  [ extensible_decl ]
                  [ aim_element_decl ]
-                 [ source_decl ]
                  [ express_ref_decl ]
                  [ refpath_decl ]
                  [ alt_map_decl ]
@@ -12,9 +11,7 @@ entity_mapping = "ENTITY_MAPPING" entity_name ";" newline
 
 extensible_decl = "EXTENSIBLE" ":" boolean ";" newline ;
 
-aim_element_decl = "AIM_ELEMENT" ":" string ";" newline ;
-
-source_decl = "SOURCE" ":" string ";" newline ;
+aim_element_decl = "AIM_ELEMENT" ":" ( express_link | string ) ";" newline ;
 
 express_ref_decl = "EXPRESS_REF" ":" "[" [ string { "," string } ] "]" ";" newline ;
 
@@ -28,7 +25,7 @@ refpath_line = [ indentation ] reference_expression newline ;
 
 reference_expression = entity_reference [ relationship { relationship } ] ;
 
-relationship = path_relation | supertype_relation | subtype_relation | 
+relationship = path_relation | supertype_relation | subtype_relation |
                 select_extension | constraint ;
 
 entity_reference = identifier ;
@@ -50,16 +47,25 @@ indentation = ? one or more spaces or tabs ? ;
 alt_map_decl = "ALT_MAP" ":" "[" [ string { "," string } ] "]" ";" newline ;
 
 attribute_mapping = "ATTRIBUTE_MAPPING" attribute_name ";" newline
-                    "ASSERTION_TO" ":" string ";" newline
+                    "ASSERTION_TO" ":" ( express_link | string ) ";" newline
                     [ aim_element_decl ]
-                    [ source_decl ]
                     [ express_ref_decl ]
                     [ refpath_decl ]
                     "END_ATTRIBUTE_MAPPING" ";" newline ;
 
+entity_ref = express_link | entity_name ;
+
 entity_name = identifier ;
 
 attribute_name = identifier ;
+
+express_link = "<<express:" schema_name "." element_name "," display_name ">>" ;
+
+schema_name = identifier ;
+
+element_name = identifier ;
+
+display_name = identifier ;
 
 identifier = letter { letter | digit | "_" } ;
 
